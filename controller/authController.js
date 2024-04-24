@@ -52,6 +52,7 @@ const UserLogin = async (req, res) => {
 
     // Storing a cookie
     res.cookie("token", token, { httpOnly: true });
+    res.cookie("userid", userDetails._id, { httpOnly: true });
 
     res
       .status(200)

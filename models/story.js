@@ -1,44 +1,55 @@
 const mongoose = require("mongoose");
 
 const postSchema = mongoose.Schema({
-    title: {
-        type: String,
-        required: true
-    },
-    subtitle: {
-        type: String,
-        required: true
-    },
-    img: {
-        type: String,
-        required: true
-    },
-})
+  title: {
+    type: String,
+    required: true,
+  },
+  subtitle: {
+    type: String,
+    required: true,
+  },
+  img: {
+    type: String,
+    required: true,
+  },
+});
 
 const storySchema = mongoose.Schema(
   {
     category: {
       type: String,
       required: true,
-    },  
-    isBookedMarked: {
-      type: Boolean,
-      required: true,
     },
-    bookedMarkedBy: {
-        type: String,
+    bookedMarkedBy: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
         required: false,
-    },
+        ref: "users",
+      },
+    ],
+    likedBy: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        required: false,
+        ref: "users",
+      },
+    ],
     createdBy: {
       type: String,
-      required: true
+      required: true,
+    },
+    likes: {
+      type: Number,
+      required: false,
+      default: 0,
     },
     data: {
-        type: [postSchema],
-        required: true
-    }
+      type: [postSchema],
+      required: true,
+    },
   },
-  { timeStamp: { createdAt: "createdAt", updatedAt: "updatedAt" } }
+  { timestamps: true }
 );
 
 const Story = mongoose.model("Story", storySchema);
