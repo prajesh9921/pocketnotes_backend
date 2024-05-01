@@ -39,13 +39,13 @@ const UserLogin = async (req, res) => {
     const { email, password } = req.body;
     const userDetails = await User.findOne({ email: email });
     if (!userDetails) {
-      res.status(401).json({ message: "Invalid username or password" });
+      res.status(401).json({ message: "Invalid username or password", loginStatus: false});
     }
 
     const matchPassword = await bcrypt.compare(password, userDetails.password);
 
     if (!matchPassword) {
-      res.status(401).json({ message: "Invalid username or password" });
+      res.status(401).json({ message: "Invalid username or password", loginStatus: false });
     }
 
     const token = jwt.sign({ id: userDetails._id }, process.env.SECRET_KEY);
@@ -61,6 +61,7 @@ const UserLogin = async (req, res) => {
         token: token,
         userEmail: userDetails.email,
         userId: userDetails._id,
+        loginStatus: true
       });
   } catch (err) {
     console.log("Error logging user" + err);

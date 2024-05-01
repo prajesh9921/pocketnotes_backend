@@ -50,7 +50,7 @@ const GetPostDataByQuery = async (req, res, next) => {
 
 const GetBookedMarkedStories = async (req, res, next) => {
   try {
-    const userID = req.cookies.userid;
+    const userID = req.params.userid;
     const resposne = await Story.find({ bookedMarkedBy: userID });
     res.status(200).json({ count: resposne.length, data: resposne });
   } catch (err) {
@@ -133,11 +133,30 @@ const GetStoryById = async (req, res, next) => {
   }
 }
 
+const GetyourStories = async (req, res, next) => {
+  try {
+    const userID = req.params.userid;
+    if (!userID) {
+      return res.status(400).json({ message: "Bad request" });
+    }
+
+    const yourStories = await Story.find({createdBy: userID});
+    if (!yourStories) {
+      return res.status(404).json({ message: "No story found" });
+    }
+
+    res.status(200).json({data: yourStories});
+  } catch (err) {
+    next(err);
+  }
+}
+
 module.exports = {
   AddStory,
   GetPostDataByQuery,
   GetBookedMarkedStories,
   ToBookmarkStory,
   ToLikeStory,
-  GetStoryById
+  GetStoryById,
+  GetyourStories
 };
