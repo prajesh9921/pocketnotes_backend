@@ -3,8 +3,7 @@ const Story = require("../models/story");
 // Add Story
 const AddStory = async (req, res, next) => {
   try {
-    const { category, data } = req.body;
-    const userID = req.cookies.userid;
+    const { category, data, userid } = req.body;
 
     if (!category || !data ) {
       return res
@@ -14,7 +13,7 @@ const AddStory = async (req, res, next) => {
 
     const newStory = new Story({
       category: category.toLowerCase(),
-      createdBy: userID,
+      createdBy: userid,
       data,
     });
 
@@ -61,8 +60,9 @@ const GetBookedMarkedStories = async (req, res, next) => {
 const ToBookmarkStory = async (req, res, next) => {
   try {
     const StoryId = req.params.storyid;
-    const userID = req.cookies.userid;
-    if (!StoryId) {
+    const userID = req.params.userid;
+    
+    if (!StoryId && !userID) {
       return res.status(400).json({ message: "Bad request" });
     }
 
@@ -89,8 +89,9 @@ const ToBookmarkStory = async (req, res, next) => {
 const ToLikeStory = async (req, res, next) => {
   try {
     const StoryId = req.params.storyid;
-    const userID = req.cookies.userid;
-    if (!StoryId) {
+    const userID = req.params.userid;
+    
+    if (!StoryId && !userID) {
       return res.status(400).json({ message: "Bad request" });
     }
 
@@ -151,6 +152,29 @@ const GetyourStories = async (req, res, next) => {
   }
 }
 
+const EditStory = async (req, res, next) => {
+  try {
+    const storyid = req.params.storyid;
+    const updatedDetails = req.body;
+
+    if (!storyid) {
+      res.status(400).json({ message: "Bad request" });
+    }
+
+    await Story.updateOne(
+      { _id: storyid },
+      {
+        $set: {
+          ...updatedDetails,  
+        },
+      }
+    );
+    res.status(200).json({ message: "Updated job details" });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   AddStory,
   GetPostDataByQuery,
@@ -158,5 +182,6 @@ module.exports = {
   ToBookmarkStory,
   ToLikeStory,
   GetStoryById,
-  GetyourStories
+  GetyourStories,
+  EditStory
 };
