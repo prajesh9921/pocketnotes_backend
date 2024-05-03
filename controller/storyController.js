@@ -70,9 +70,13 @@ const ToBookmarkStory = async (req, res, next) => {
     if (!storyItem) {
       return res.status(404).json({ message: "No story found" });
     }
-
+ 
     if (storyItem.bookedMarkedBy.includes(userID)) {
-      return res.status(400).json({ message: "Story already bookedmarked" });
+      await Story.updateOne(
+        { _id: StoryId },
+        { $pull: { bookedMarkedBy: userID } }
+      );
+      return res.status(200).json({ message: "Bookmarked removed." });
     }
 
     await Story.findOneAndUpdate(
@@ -101,7 +105,11 @@ const ToLikeStory = async (req, res, next) => {
     }
 
     if (storyItem.likedBy.includes(userID)) {
-      return res.status(400).json({ message: "Story already liked" });
+      await Story.updateOne(
+        { _id: StoryId },
+        { $pull: { likedBy: userID }, $inc: { likes: -1 }}
+      );
+      return res.status(200).json({ message: "Story Unliked" });
     }
 
     const updatedLike = await Story.findByIdAndUpdate(

@@ -23,14 +23,14 @@ const storySchema = mongoose.Schema(
     },
     bookedMarkedBy: [
       {
-        type: mongoose.Schema.Types.ObjectId,
+        type: String,
         required: false,
         ref: "users",
       },
     ],
     likedBy: [
       {
-        type: mongoose.Schema.Types.ObjectId,
+        type: String,
         required: false,
         ref: "users",
       },
